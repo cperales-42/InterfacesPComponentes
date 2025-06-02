@@ -1,0 +1,416 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package proyectocomponentesempleadoscperales;
+
+import com.proyecto.componentes.componente1A.*;
+import com.proyecto.componentes.componente1B.*;
+import com.proyecto.componentes.componente2A.*;
+import com.proyecto.componentes.componente2B.*;
+import com.proyecto.componentes.componente3.*;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Meu
+ */
+public class BuscarEmpleados extends javax.swing.JFrame {
+
+    /**
+     * Creates new form BuscarEmpleados
+     */
+    private Connection con = null;
+    private ResultSet resul = null;
+    private Statement stmt = null;
+    private DefaultTableModel modeloTabla = new DefaultTableModel();
+    
+    public BuscarEmpleados() {
+        initComponents();
+        this.setTitle("Buscar empleados");
+        
+        String bbdd = "jdbc:hsqldb:hsql://localhost/";
+        String usuario = "SA";
+        String clave = "SA";
+        
+        try {
+            // Conexión a la base de datos
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+            con = DriverManager.getConnection(bbdd, usuario, clave);
+            if (con != null) {
+                System.out.println("Connection created successfully");
+            } else {
+                System.out.println("Problem with creating connection");
+            }
+
+            // Ejecutar la consulta
+            String sql = "SELECT e.nombre, e.apellidos, ca.nombre,\n" +
+                    "ci.nombre FROM EMPLEADOS e JOIN CARGOS ca ON e.codCargo = ca.codigo\n" +
+                    "JOIN CIUDADES ci ON e.codCiudad = ci.codigo";
+                    
+
+            stmt = con.createStatement();
+            resul = stmt.executeQuery(sql);
+
+            // Configurar columnas
+            String[] nombresColumnas = {
+                "Nombre",
+                "Apellidos",
+                "Cargo",
+                "Ciudad"
+            };
+
+            // Crear las columnas del modelo de tabla
+            for (String nombreColumna : nombresColumnas) {
+                modeloTabla.addColumn(nombreColumna);
+            }
+
+            // Cargar los datos en el modelo
+            while (resul.next()) {
+                Object[] fila = new Object[nombresColumnas.length];
+                for (int j = 1; j <= nombresColumnas.length; j++) {
+                    fila[j - 1] = resul.getObject(j);
+                }
+                modeloTabla.addRow(fila);
+            }
+
+            // Asignar el modelo a la tabla
+            tabla.setModel(modeloTabla);
+
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+            // Cerrar la conexión
+            try {
+                con.close(); //con contiene la conexión a la base de datos.
+            } catch (SQLException ex) {
+                System.out.println("Oops");
+            }
+        }
+        
+        cargarCargosEnComponente();
+        
+        componente1B1.setjLabelText("Apellido:");
+        componente31.setJLabelText("Cargo:");
+    }
+    
+     public void buscarEmpleados() {
+        String apellido = componente1B1.getjLabelText();
+        String cargo = componente31.getTextoBusqueda();
+        
+        // Implementar lógica de filtrado de empleados en la tabla
+    }
+    
+    public void reiniciarFormulario() {
+        componente1B1.setjTextField1Text("");
+    }
+    
+    public void cargarCargosEnComponente() {
+        try {
+            String sql = "SELECT codigo, nombre FROM CARGOS";
+            stmt = con.createStatement();
+            resul = stmt.executeQuery(sql);
+
+            // Usamos un ArrayList para almacenar los datos
+            ArrayList<Object[]> listaCargos = new ArrayList<>();
+
+            // Recorremos el ResultSet y almacenamos los datos en el ArrayList
+            while (resul.next()) {
+                listaCargos.add(new Object[]{
+                    resul.getObject("codigo"),  // Código del cargo
+                    resul.getObject("nombre")   // Nombre del cargo
+                });
+            }
+
+            // Convertimos el ArrayList a un array bidimensional directamente
+            Object[][] datosCargos = listaCargos.toArray(new Object[0][2]);
+
+            // Asignar datos al componente
+            componente31.setMatrizDatos(datosCargos);
+
+    } catch (SQLException e) {
+         e.printStackTrace();
+      }
+    }
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabla = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        componente1B1 = new com.proyecto.componentes.componente1B.Componente1B();
+        componente31 = new com.proyecto.componentes.componente3.Componente3();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tabla);
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("jLabel2");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 0);
+        jPanel2.add(jLabel2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 14;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 73, 0, 0);
+        jPanel2.add(componente1B1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 190, 28, 709);
+        jPanel2.add(componente31, gridBagConstraints);
+
+        jButton1.setText("BUSCAR");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("REINICIAR");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(209, 209, 209)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(59, 59, 59))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jMenu1.setText("Archivo");
+
+        jMenuItem2.setText("Buscar empleado");
+        jMenu1.add(jMenuItem2);
+
+        jMenuItem1.setText("Añadir o modificar empleado");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Funciones");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1339, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(81, 81, 81))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //filtros y tal
+        String sql = "SELECT e.nombre, e.apellidos, ca.nombre,\n" +
+                    "ci.nombre FROM EMPLEADOS e JOIN CARGOS ca ON e.codCargo = ca.codigo\n" +
+                    "JOIN CIUDADES ci ON e.codCiudad = ci.codigo ";
+        //filtro de apellido
+        if (!componente1B1.getjTextField1Text().isEmpty() && !componente1B1.getjTextField1Text().equals("jTextField1")){
+            sql += "AND e.apellidos = '" + componente1B1.getjTextField1Text() + "'";
+        }
+        //filtro de cargo
+        String cargoSeleccionado = componente31.getCodigoSeleccionado();
+        if (cargoSeleccionado != null && !cargoSeleccionado.isEmpty()) {
+            sql += "AND e.codCargo = '" + cargoSeleccionado + "'";
+        }
+        
+        try {
+        // Ejecutar la consulta
+        stmt = con.createStatement();
+        resul = stmt.executeQuery(sql);
+        
+        // Configurar columnas
+        String[] nombresColumnas = {
+                "Nombre",
+                "Apellidos",
+                "Cargo",
+                "Ciudad"
+            };
+        
+        modeloTabla.setRowCount(0);  // Limpia las filas actuales
+        modeloTabla.setColumnCount(0); // Limpia las columnas actuales
+
+        for (String nombreColumna : nombresColumnas) {
+            modeloTabla.addColumn(nombreColumna);
+        }
+
+        // Cargar los datos en el modelo
+        while (resul.next()) {
+        Object[] fila = new Object[nombresColumnas.length];
+        for (int j = 1; j <= nombresColumnas.length; j++) {
+            fila[j - 1] = resul.getObject(j);
+        }
+        modeloTabla.addRow(fila);
+        }
+
+        // Asignar el modelo a la tabla
+        tabla.setModel(modeloTabla);
+
+    } catch (Exception e) {
+        e.printStackTrace(System.out);
+        // Cerrar la conexión
+        try {
+            con.close(); //con contiene la conexión a la base de datos.
+        } catch (SQLException ex) {
+            System.out.println("Oops");
+        }
+    }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        ModificarEmpleados me = new ModificarEmpleados();
+        me.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        componente1B1.setjTextField1Text("");
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(BuscarEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(BuscarEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(BuscarEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(BuscarEmpleados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new BuscarEmpleados().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.proyecto.componentes.componente1B.Componente1B componente1B1;
+    private com.proyecto.componentes.componente3.Componente3 componente31;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tabla;
+    // End of variables declaration//GEN-END:variables
+}
